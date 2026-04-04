@@ -6,11 +6,12 @@ import { useSupabaseTable } from "../hooks/useSupabase";
 import TabBar from "./TabBar";
 import WishTripTab from "./WishTripTab";
 import CalendarTab from "./CalendarTab";
+import FoodListTab from "./FoodListTab";
 import WishlistTab from "./WishlistTab";
 import ExpensesTab from "./ExpensesTab";
 
 export default function TripView({ trip, onBack }) {
-  const [tab, setTab] = useState("wishtrip");
+  const [tab, setTab] = useState("calendar");
   const [wishes, wishOps] = useSupabaseTable("wishes", trip.id);
   const [events, eventOps] = useSupabaseTable("events", trip.id);
   const DATES = useMemo(() => makeDates(trip.startDate, trip.endDate), [trip.startDate, trip.endDate]);
@@ -30,8 +31,9 @@ export default function TripView({ trip, onBack }) {
         </div>
       </div>
       <div className="pb-16">
-        {tab === "wishtrip" && <WishTripTab wishes={wishes} wishOps={wishOps} events={events} eventOps={eventOps} dates={DATES} />}
         {tab === "calendar" && <CalendarTab events={events} eventOps={eventOps} dates={DATES} />}
+        {tab === "wishtrip" && <WishTripTab wishes={wishes} wishOps={wishOps} events={events} eventOps={eventOps} dates={DATES} />}
+        {tab === "foodlist" && <FoodListTab tripId={trip.id} events={events} eventOps={eventOps} dates={DATES} />}
         {tab === "wishlist" && <WishlistTab tripId={trip.id} />}
         {tab === "expenses" && <ExpensesTab dates={DATES} tripId={trip.id} />}
       </div>

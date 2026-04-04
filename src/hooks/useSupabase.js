@@ -104,6 +104,7 @@ export function useTrips() {
       supabase.from("events").delete().eq("trip_id", id),
       supabase.from("expenses").delete().eq("trip_id", id),
       supabase.from("shopwish").delete().eq("trip_id", id),
+      supabase.from("food_wishes").delete().eq("trip_id", id),
     ]);
     const { error } = await supabase.from("trips").delete().eq("id", id);
     if (!error) setTrips((prev) => prev.filter((t) => t.id !== id));

@@ -70,6 +70,21 @@ create table if not exists shopwish (
   created_at timestamptz default now()
 );
 
+-- 6. 許願餐廳
+create table if not exists food_wishes (
+  id uuid default gen_random_uuid() primary key,
+  trip_id uuid references trips(id) on delete cascade,
+  name text not null,
+  category text default '正餐',       -- 正餐 / 甜點 / 咖啡廳
+  price numeric default 0,
+  currency text default 'JPY',
+  business_hours text default '',      -- 營業時間
+  nearest_station text default '',     -- 最近車站
+  url text default '',
+  visited boolean default false,
+  created_at timestamptz default now()
+);
+
 -- ============================================================
 -- Row Level Security (RLS)
 -- 個人使用：允許 anon key 完全存取
@@ -86,3 +101,5 @@ create policy "Allow all on wishes" on wishes for all using (true) with check (t
 create policy "Allow all on events" on events for all using (true) with check (true);
 create policy "Allow all on expenses" on expenses for all using (true) with check (true);
 create policy "Allow all on shopwish" on shopwish for all using (true) with check (true);
+alter table food_wishes enable row level security;
+create policy "Allow all on food_wishes" on food_wishes for all using (true) with check (true);

@@ -20,3 +20,4 @@ export const ICON_CAT_MOTIVATION = "/icons/motivation.png";
 export const ICON_ORIGAMI = "/icons/origami.png";
 export const ICON_BACK = "/icons/forward.png";
 export const ICON_CAT_TICKET = ICON_TICKET;
+export const ICON_FOOD = "/icons/ramen.png";
