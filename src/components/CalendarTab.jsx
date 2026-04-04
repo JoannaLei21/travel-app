@@ -75,7 +75,12 @@ export default function CalendarTab({ events, eventOps, dates }) {
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-bold" style={{ color: C.brown }}>{ev.title}</p>
                   <p className="text-xs opacity-40 mt-0.5">{String(ev.start_h).padStart(2, "0")}:00 ~ {String(ev.end_h).padStart(2, "0")}:00</p>
-                  {ev.location && <p className="text-xs opacity-50 mt-0.5"><img src={ICON_CAT_SHINKANSEN} alt="" style={{ width: 13, height: 13, display: "inline", verticalAlign: "middle", marginRight: 3 }} />{ev.location}</p>}
+                  {ev.location && (
+                    <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ev.location)}`} target="_blank" rel="noreferrer"
+                      className="text-xs mt-0.5 inline-flex items-center gap-0.5 hover:underline" style={{ color: "#1565c0" }}>
+                      <img src={ICON_CAT_SHINKANSEN} alt="" style={{ width: 13, height: 13 }} />{ev.location}
+                    </a>
+                  )}
                   {ev.price > 0 && (
                     <p className="text-xs font-bold mt-0.5" style={{ color: C.accent }}>
                       {ev.currency === "JPY" ? "¥" : "NT$"}{ev.price.toLocaleString()}

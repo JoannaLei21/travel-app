@@ -48,7 +48,10 @@ export default function WishTripTab({ wishes, wishOps, events, eventOps, dates }
                 <button onClick={() => remove(w.id)} className="text-xs px-1 py-0.5 opacity-40 hover:opacity-80">✕</button>
               </div>
             </div>
-            <p className="text-xs mt-1 opacity-60">📍 {w.address}</p>
+            {w.address && (
+              <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(w.address)}`} target="_blank" rel="noreferrer"
+                className="text-xs mt-1 inline-block hover:underline" style={{ color: "#1565c0" }}>📍 {w.address}</a>
+            )}
             <div className="flex items-center gap-3 mt-2">
               {w.price > 0 ? (
                 <span className="text-sm font-bold" style={{ color: C.accent }}>{w.currency === "JPY" ? "¥" : "NT$"}{w.price.toLocaleString()}</span>

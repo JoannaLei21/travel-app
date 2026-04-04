@@ -86,7 +86,10 @@ export default function FoodListTab({ tripId, events, eventOps, dates }) {
                     <span className="text-xs opacity-40">≈ NT${Math.round(f.price * JPY_TO_TWD).toLocaleString()}</span>
                   )}
                 </div>
-                {f.nearest_station && <p className="text-xs mt-1.5 opacity-60">🚉 {f.nearest_station}</p>}
+                {f.nearest_station && (
+                  <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.nearest_station)}`} target="_blank" rel="noreferrer"
+                    className="text-xs mt-1.5 inline-block hover:underline" style={{ color: "#1565c0" }}>🚉 {f.nearest_station}</a>
+                )}
                 {f.business_hours && (
                   <p className="text-xs mt-1" style={{ color: C.accent2 }}>
                     <img src={ICON_STOPWATCH} alt="" style={{ width: 14, height: 14, display: "inline", verticalAlign: "middle", marginRight: 3 }} />
