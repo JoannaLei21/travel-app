@@ -191,7 +191,7 @@ export default function HomePage({ trips, tripOps, onSelectTrip }) {
       {!showForm && (
         <button onClick={openAdd}
           className="fixed flex items-center justify-center text-white text-2xl font-bold z-50"
-          style={{ bottom: 24, right: "calc(50% - 220px)", width: 52, height: 52, borderRadius: "50%", background: "#e8909c", boxShadow: "0 2px 12px rgba(232,144,156,0.4)" }}>
+          style={{ bottom: 24, left: "50%", transform: "translateX(-50%)", width: 52, height: 52, borderRadius: "50%", background: "#e8909c", boxShadow: "0 2px 12px rgba(232,144,156,0.4)" }}>
           ＋
         </button>
       )}
