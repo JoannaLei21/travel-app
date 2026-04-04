@@ -1,0 +1,22 @@
+// 圖示路徑常數
+export const ICON_WISHTRIP = "/icons/learning.png";
+export const ICON_CALENDAR = "/icons/schedule.png";
+export const ICON_WISHLIST = "/icons/growth.png";
+export const ICON_EXPENSE = "/icons/homework.png";
+export const ICON_PEN = "/icons/pen.png";
+export const ICON_TEMPLE = "/icons/temple.png";
+export const ICON_SUCCESS = "/icons/success.png";
+export const ICON_STOPWATCH = "/icons/stopwatch.png";
+export const ICON_TICKET = "/icons/ticket.png";
+export const ICON_TVSCREEN = "/icons/tv-screen.png";
+export const ICON_CAT_RAMEN = "/icons/ramen.png";
+export const ICON_CAT_DANGO = "/icons/dango.png";
+export const ICON_CAT_SHINKANSEN = "/icons/shinkansen.png";
+export const ICON_CAT_BUY = "/icons/buy.png";
+export const ICON_CAT_GIFT_BOX = "/icons/gift-box.png";
+export const ICON_CAT_COIN = "/icons/coin.png";
+export const ICON_CAT_JAPANESE = "/icons/japanese.png";
+export const ICON_CAT_MOTIVATION = "/icons/motivation.png";
+export const ICON_ORIGAMI = "/icons/origami.png";
+export const ICON_BACK = "/icons/forward.png";
+export const ICON_CAT_TICKET = ICON_TICKET;
