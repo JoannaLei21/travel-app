@@ -16,12 +16,12 @@ export default function FoodListTab({ tripId, events, eventOps, dates }) {
   const DATES = dates;
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [form, setForm] = useState({ name: "", category: "正餐", price: "", currency: "JPY", business_hours: "", nearest_station: "", url: "", reservation_url: "" });
+  const [form, setForm] = useState({ name: "", category: "正餐", price: "", currency: "JPY", address: "", business_hours: "", nearest_station: "", url: "", reservation_url: "" });
   const [addToCalId, setAddToCalId] = useState(null);
   const [calForm, setCalForm] = useState({ date: DATES[0], start_h: 11, end_h: 13 });
 
-  const openNew = () => { setForm({ name: "", category: "正餐", price: "", currency: "JPY", business_hours: "", nearest_station: "", url: "", reservation_url: "" }); setEditId(null); setShowForm(true); };
-  const openEdit = (f) => { setForm({ name: f.name, category: f.category, price: String(f.price), currency: f.currency, business_hours: f.business_hours || "", nearest_station: f.nearest_station || "", url: f.url || "", reservation_url: f.reservation_url || "" }); setEditId(f.id); setShowForm(true); };
+  const openNew = () => { setForm({ name: "", category: "正餐", price: "", currency: "JPY", address: "", business_hours: "", nearest_station: "", url: "", reservation_url: "" }); setEditId(null); setShowForm(true); };
+  const openEdit = (f) => { setForm({ name: f.name, category: f.category, price: String(f.price), currency: f.currency, address: f.address || "", business_hours: f.business_hours || "", nearest_station: f.nearest_station || "", url: f.url || "", reservation_url: f.reservation_url || "" }); setEditId(f.id); setShowForm(true); };
 
   const save = () => {
     if (!form.name) return;
@@ -40,7 +40,7 @@ export default function FoodListTab({ tripId, events, eventOps, dates }) {
   const addToCal = () => {
     const food = foods.find((f) => f.id === addToCalId);
     if (!food) return;
-    eventOps.add({ title: food.name, date: calForm.date, start_h: calForm.start_h, end_h: calForm.end_h, location: food.nearest_station, price: food.price, currency: food.currency, wish_id: null });
+    eventOps.add({ title: food.name, date: calForm.date, start_h: calForm.start_h, end_h: calForm.end_h, location: food.address || food.nearest_station, price: food.price, currency: food.currency, wish_id: null });
     setAddToCalId(null);
   };
 
@@ -86,9 +86,15 @@ export default function FoodListTab({ tripId, events, eventOps, dates }) {
                     <span className="text-xs opacity-40">≈ NT${Math.round(f.price * JPY_TO_TWD).toLocaleString()}</span>
                   )}
                 </div>
+                {f.address && (
+                  <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.address)}`} target="_blank" rel="noreferrer"
+                    className="text-xs mt-1.5 inline-flex items-center gap-0.5 hover:underline" style={{ color: "#1565c0" }}>
+                    📍 {f.address}
+                  </a>
+                )}
                 {f.nearest_station && (
                   <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.nearest_station)}`} target="_blank" rel="noreferrer"
-                    className="text-xs mt-1.5 inline-flex items-center gap-0.5 hover:underline" style={{ color: "#1565c0" }}>
+                    className="text-xs mt-1 inline-flex items-center gap-0.5 hover:underline" style={{ color: "#1565c0" }}>
                     <img src={ICON_CAT_SHINKANSEN} alt="" style={{ width: 14, height: 14 }} />{f.nearest_station}
                   </a>
                 )}
@@ -162,6 +168,7 @@ export default function FoodListTab({ tripId, events, eventOps, dates }) {
               ))}
             </div>
           </div>
+          <input placeholder="地址（如：東京都渋谷区道玄坂1-2-3）" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />
           <input placeholder="營業時間（如：11:00~21:00、週二休）" value={form.business_hours} onChange={(e) => setForm({ ...form, business_hours: e.target.value })} className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />
           <input placeholder="最近車站（如：渋谷站步行 5 分鐘）" value={form.nearest_station} onChange={(e) => setForm({ ...form, nearest_station: e.target.value })} className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />
           <input placeholder="店家網站 / Google Maps 連結" value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />

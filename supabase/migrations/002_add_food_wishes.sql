@@ -11,6 +11,7 @@ create table if not exists food_wishes (
   category text default '正餐',           -- 正餐 / 甜點 / 咖啡廳
   price numeric default 0,
   currency text default 'JPY',
+  address text default '',                 -- 地址
   business_hours text default '',          -- 營業時間
   nearest_station text default '',         -- 最近車站
   url text default '',                     -- 店家網站
