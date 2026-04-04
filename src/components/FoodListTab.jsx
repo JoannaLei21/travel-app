@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { C } from "../theme";
 import { JPY_TO_TWD, HOURS } from "../utils";
-import { ICON_PEN, ICON_STOPWATCH } from "../constants";
+import { ICON_PEN, ICON_STOPWATCH, ICON_CAT_SHINKANSEN } from "../constants";
 import { useSupabaseTable } from "../hooks/useSupabase";
 import Modal from "./Modal";
 
@@ -88,7 +88,9 @@ export default function FoodListTab({ tripId, events, eventOps, dates }) {
                 </div>
                 {f.nearest_station && (
                   <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.nearest_station)}`} target="_blank" rel="noreferrer"
-                    className="text-xs mt-1.5 inline-block hover:underline" style={{ color: "#1565c0" }}>🚉 {f.nearest_station}</a>
+                    className="text-xs mt-1.5 inline-flex items-center gap-0.5 hover:underline" style={{ color: "#1565c0" }}>
+                    <img src={ICON_CAT_SHINKANSEN} alt="" style={{ width: 14, height: 14 }} />{f.nearest_station}
+                  </a>
                 )}
                 {f.business_hours && (
                   <p className="text-xs mt-1" style={{ color: C.accent2 }}>
