@@ -81,6 +81,8 @@ create table if not exists food_wishes (
   business_hours text default '',      -- 營業時間
   nearest_station text default '',     -- 最近車站
   url text default '',
+  reservation_url text default '',     -- 預約網站
+  booked boolean default false,        -- 已預約
   visited boolean default false,
   created_at timestamptz default now()
 );

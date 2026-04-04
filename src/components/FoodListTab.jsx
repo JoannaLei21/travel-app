@@ -16,25 +16,26 @@ export default function FoodListTab({ tripId, events, eventOps, dates }) {
   const DATES = dates;
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [form, setForm] = useState({ name: "", category: "正餐", price: "", currency: "JPY", business_hours: "", nearest_station: "", url: "" });
+  const [form, setForm] = useState({ name: "", category: "正餐", price: "", currency: "JPY", business_hours: "", nearest_station: "", url: "", reservation_url: "" });
   const [addToCalId, setAddToCalId] = useState(null);
   const [calForm, setCalForm] = useState({ date: DATES[0], start_h: 11, end_h: 13 });
 
-  const openNew = () => { setForm({ name: "", category: "正餐", price: "", currency: "JPY", business_hours: "", nearest_station: "", url: "" }); setEditId(null); setShowForm(true); };
-  const openEdit = (f) => { setForm({ name: f.name, category: f.category, price: String(f.price), currency: f.currency, business_hours: f.business_hours || "", nearest_station: f.nearest_station || "", url: f.url || "" }); setEditId(f.id); setShowForm(true); };
+  const openNew = () => { setForm({ name: "", category: "正餐", price: "", currency: "JPY", business_hours: "", nearest_station: "", url: "", reservation_url: "" }); setEditId(null); setShowForm(true); };
+  const openEdit = (f) => { setForm({ name: f.name, category: f.category, price: String(f.price), currency: f.currency, business_hours: f.business_hours || "", nearest_station: f.nearest_station || "", url: f.url || "", reservation_url: f.reservation_url || "" }); setEditId(f.id); setShowForm(true); };
 
   const save = () => {
     if (!form.name) return;
     if (editId) {
       foodOps.update(editId, { ...form, price: Number(form.price) || 0 });
     } else {
-      foodOps.add({ ...form, price: Number(form.price) || 0, visited: false });
+      foodOps.add({ ...form, price: Number(form.price) || 0, visited: false, booked: false });
     }
     setShowForm(false);
   };
 
   const remove = (id) => { if (confirm("刪除此餐廳？")) foodOps.remove(id); };
   const toggleVisited = (id) => { const f = foods.find(x => x.id === id); if (f) foodOps.update(id, { visited: !f.visited }); };
+  const toggleBooked = (id) => { const f = foods.find(x => x.id === id); if (f) foodOps.update(id, { booked: !f.booked }); };
 
   const addToCal = () => {
     const food = foods.find((f) => f.id === addToCalId);
@@ -93,7 +94,11 @@ export default function FoodListTab({ tripId, events, eventOps, dates }) {
                   </p>
                 )}
                 {f.url && <a href={f.url} target="_blank" rel="noreferrer" className="inline-block text-xs mt-1 underline" style={{ color: "#1565c0" }}>🔗 店家資訊</a>}
+                {f.reservation_url && <a href={f.reservation_url} target="_blank" rel="noreferrer" className="inline-block text-xs mt-1 ml-3 underline" style={{ color: "#c62828" }}>📋 預約網站</a>}
                 <div className="flex items-center gap-3 mt-3 pt-2 border-t" style={{ borderColor: C.borderLight }}>
+                  <label className="flex items-center gap-1.5 text-xs cursor-pointer" style={{ color: f.booked ? C.green : "#888" }}>
+                    <input type="checkbox" checked={f.booked || false} onChange={() => toggleBooked(f.id)} className="accent-green-600" /> 已預約
+                  </label>
                   <label className="flex items-center gap-1.5 text-xs cursor-pointer" style={{ color: f.visited ? C.green : "#888" }}>
                     <input type="checkbox" checked={f.visited || false} onChange={() => toggleVisited(f.id)} className="accent-green-600" /> 已造訪
                   </label>
@@ -154,7 +159,8 @@ export default function FoodListTab({ tripId, events, eventOps, dates }) {
           </div>
           <input placeholder="營業時間（如：11:00~21:00、週二休）" value={form.business_hours} onChange={(e) => setForm({ ...form, business_hours: e.target.value })} className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />
           <input placeholder="最近車站（如：渋谷站步行 5 分鐘）" value={form.nearest_station} onChange={(e) => setForm({ ...form, nearest_station: e.target.value })} className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />
-          <input placeholder="店家網站 / Google Maps 連結" value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} className="w-full p-2.5 mb-3 rounded-lg border text-sm" style={{ borderColor: C.border }} />
+          <input placeholder="店家網站 / Google Maps 連結" value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />
+          <input placeholder="預約網站連結（如：Tabelog、Hot Pepper）" value={form.reservation_url} onChange={(e) => setForm({ ...form, reservation_url: e.target.value })} className="w-full p-2.5 mb-3 rounded-lg border text-sm" style={{ borderColor: C.border }} />
           <div className="flex gap-2">
             <button onClick={() => setShowForm(false)} className="flex-1 py-2.5 rounded-xl border text-sm" style={{ borderColor: "#ddd", color: "#888" }}>取消</button>
             <button onClick={save} className="flex-1 py-2.5 rounded-xl text-white text-sm font-bold" style={{ background: "#e8909c" }}>儲存</button>
