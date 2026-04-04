@@ -100,11 +100,11 @@ export default function HomePage({ trips, tripOps, onSelectTrip }) {
 
         {/* 新增/編輯表單 */}
         {showForm && (
-          <div className="rounded-2xl p-4 mb-3 border" style={{ background: C.card, borderColor: C.border }}>
-            <div className="text-sm font-bold mb-3" style={{ color: C.brown }}>{editId ? "編輯旅行" : "新增旅行"}</div>
+          <div className="rounded-2xl p-5 mb-4 border" style={{ background: C.card, borderColor: C.border }}>
+            <div className="text-sm font-bold mb-4" style={{ color: C.brown }}>{editId ? "編輯旅行" : "新增旅行"}</div>
             <input placeholder="旅行名稱（如：東京自由行 2026）" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />
-            <div className="flex gap-2 mb-3">
+              className="w-full p-3 mb-3 rounded-lg border text-sm" style={{ borderColor: C.border }} />
+            <div className="flex gap-3 mb-4">
               <div className="flex-1">
                 <label className="text-xs mb-1 block" style={{ color: C.brownLight }}>出發日</label>
                 <input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })}
@@ -124,8 +124,8 @@ export default function HomePage({ trips, tripOps, onSelectTrip }) {
             )}
 
             {/* 去程交通 */}
-            <div className="text-xs font-bold mb-2" style={{ color: C.brownLight }}>去程交通（選填）</div>
-            <div className="flex gap-1 mb-2 flex-wrap">
+            <div className="text-xs font-bold mb-2 mt-4" style={{ color: C.brownLight }}>去程交通（選填）</div>
+            <div className="flex gap-1.5 mb-3 flex-wrap">
               {TRANSPORT_TYPES.map((tt) => (
                 <button key={tt} onClick={() => setForm({ ...form, transportType: form.transportType === tt ? "" : tt })}
                   className="px-2.5 py-1.5 rounded-full text-xs border"
@@ -151,8 +151,8 @@ export default function HomePage({ trips, tripOps, onSelectTrip }) {
             )}
 
             {/* 回程交通 */}
-            <div className="text-xs font-bold mb-2" style={{ color: C.brownLight }}>回程交通（選填）</div>
-            <div className="flex gap-1 mb-2 flex-wrap">
+            <div className="text-xs font-bold mb-2 mt-4" style={{ color: C.brownLight }}>回程交通（選填）</div>
+            <div className="flex gap-1.5 mb-3 flex-wrap">
               {TRANSPORT_TYPES.map((tt) => (
                 <button key={tt} onClick={() => setForm({ ...form, returnTransportType: form.returnTransportType === tt ? "" : tt })}
                   className="px-2.5 py-1.5 rounded-full text-xs border"
@@ -177,9 +177,9 @@ export default function HomePage({ trips, tripOps, onSelectTrip }) {
               </div>
             )}
 
-            <div className="flex gap-2 mt-3">
-              <button onClick={() => setShowForm(false)} className="flex-1 py-2.5 rounded-xl border text-sm" style={{ borderColor: "#ddd", color: "#888" }}>取消</button>
-              <button onClick={save} className="flex-1 py-2.5 rounded-xl text-white text-sm font-bold" style={{ background: "#e8909c" }}>
+            <div className="flex gap-3 mt-5">
+              <button onClick={() => setShowForm(false)} className="flex-1 py-3 rounded-xl border text-sm" style={{ borderColor: "#ddd", color: "#888" }}>取消</button>
+              <button onClick={save} className="flex-1 py-3 rounded-xl text-white text-sm font-bold" style={{ background: "#e8909c" }}>
                 {editId ? "儲存" : "建立旅行"}
               </button>
             </div>
