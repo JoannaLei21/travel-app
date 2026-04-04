@@ -154,7 +154,11 @@ export default function ExpensesTab({ dates, tripId }) {
             <span className="w-9 h-9 rounded-full flex items-center justify-center text-lg" style={{ background: cat.color + "15" }}>{cat.imgSrc ? <img src={cat.imgSrc} alt="" style={{ width: 20, height: 20 }} /> : cat.icon}</span>
             <div className="flex-1 min-w-0">
               <div className="text-sm font-medium" style={{ color: C.brown }}>{exp.description || exp.category}</div>
-              <div className="text-xs opacity-50">{exp.date}{exp.qty > 1 ? ` × ${exp.qty}` : ""}</div>
+              <div className="text-xs opacity-50">
+                {exp.qty > 1
+                  ? `${exp.currency === "JPY" ? "¥" : "NT$"}${Math.round(exp.amount / exp.qty).toLocaleString()} × ${exp.qty}`
+                  : exp.date}
+              </div>
             </div>
             <div className="text-right">
               <div className="text-sm font-bold" style={{ color: C.accent }}>{exp.currency === "JPY" ? "¥" : "NT$"}{exp.amount.toLocaleString()}</div>
