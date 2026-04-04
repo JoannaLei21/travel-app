@@ -31,6 +31,7 @@ export function useSupabaseTable(table, tripId, defaultRows = []) {
     const payload = { ...row, trip_id: tripId };
     delete payload.id; // let Supabase generate id
     const { data, error } = await supabase.from(table).insert(payload).select().single();
+    if (error) console.error(`[useSupabaseTable] ${table} insert 失敗:`, error);
     if (!error && data) setRows((prev) => [...prev, data]);
     return data;
   }, [table, tripId]);
