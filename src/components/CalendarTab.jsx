@@ -1,13 +1,14 @@
 import { useState, useRef } from "react";
 import { C } from "../theme";
-import { getWD, isWkend, HOURS } from "../utils";
+import { getWD, isWkend, HOURS, JPY_TO_TWD } from "../utils";
+import { ICON_CAT_SHINKANSEN } from "../constants";
 import Modal from "./Modal";
 
 export default function CalendarTab({ events, eventOps, dates }) {
   const DATES = dates;
   const [selDate, setSelDate] = useState(DATES[0]);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ title: "", start_h: 9, end_h: 10, location: "" });
+  const [form, setForm] = useState({ title: "", start_h: 9, end_h: 10, location: "", price: "", currency: "JPY" });
   const touchStartX = useRef(null);
   const [slideDir, setSlideDir] = useState(null);
 
@@ -26,7 +27,7 @@ export default function CalendarTab({ events, eventOps, dates }) {
 
   const addEvent = () => {
     if (!form.title) return;
-    eventOps.add({ title: form.title, date: selDate, start_h: form.start_h, end_h: form.end_h, location: form.location, price: 0, currency: "JPY" });
+    eventOps.add({ title: form.title, date: selDate, start_h: form.start_h, end_h: form.end_h, location: form.location, price: Number(form.price) || 0, currency: form.currency });
     setShowForm(false);
   };
 
@@ -69,12 +70,18 @@ export default function CalendarTab({ events, eventOps, dates }) {
           const height = (ev.end_h - ev.start_h) * 56;
           return (
             <div key={ev.id} className="absolute left-12 right-2 rounded-xl p-2 border overflow-hidden"
-              style={{ top, height, minHeight: 40, background: ev.wish_id ? C.pinkLight : C.yellowLight, borderColor: ev.wish_id ? C.accent : C.accent2, zIndex: 2 }}>
+              style={{ top, height, minHeight: 56, background: ev.wish_id ? C.pinkLight : C.yellowLight, borderColor: ev.wish_id ? C.accent : C.accent2, zIndex: 2 }}>
               <div className="flex justify-between items-start">
-                <div>
+                <div className="flex-1 min-w-0">
                   <p className="text-xs font-bold" style={{ color: C.brown }}>{ev.title}</p>
-                  {ev.location && <p className="text-xs opacity-50 mt-0.5">📍 {ev.location}</p>}
                   <p className="text-xs opacity-40 mt-0.5">{String(ev.start_h).padStart(2, "0")}:00 ~ {String(ev.end_h).padStart(2, "0")}:00</p>
+                  {ev.location && <p className="text-xs opacity-50 mt-0.5"><img src={ICON_CAT_SHINKANSEN} alt="" style={{ width: 13, height: 13, display: "inline", verticalAlign: "middle", marginRight: 3 }} />{ev.location}</p>}
+                  {ev.price > 0 && (
+                    <p className="text-xs font-bold mt-0.5" style={{ color: C.accent }}>
+                      {ev.currency === "JPY" ? "¥" : "NT$"}{ev.price.toLocaleString()}
+                      {ev.currency === "JPY" && <span className="font-normal opacity-40"> ≈ NT${Math.round(ev.price * JPY_TO_TWD).toLocaleString()}</span>}
+                    </p>
+                  )}
                 </div>
                 <button onClick={() => removeEvent(ev.id)} className="text-xs opacity-30 hover:opacity-80">✕</button>
               </div>
@@ -83,7 +90,7 @@ export default function CalendarTab({ events, eventOps, dates }) {
         })}
       </div>
 
-      <button onClick={() => { setForm({ title: "", start_h: 9, end_h: 10, location: "" }); setShowForm(true); }}
+      <button onClick={() => { setForm({ title: "", start_h: 9, end_h: 10, location: "", price: "", currency: "JPY" }); setShowForm(true); }}
         className="fixed z-40 flex items-center justify-center text-white text-xl font-bold shadow-lg"
         style={{ width: 48, height: 48, borderRadius: "50%", background: "#e8909c", bottom: 80, left: "50%", transform: "translateX(-50%)" }}>
         ＋
@@ -94,6 +101,17 @@ export default function CalendarTab({ events, eventOps, dates }) {
           <h3 className="font-bold text-base mb-3" style={{ color: C.brown }}>新增行程 — {selDate.slice(5).replace("-", "/")}</h3>
           <input placeholder="行程名稱 *" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />
           <input placeholder="地點（選填）" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />
+          <div className="flex gap-2 mb-2">
+            <input placeholder="預估費用" type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="flex-1 p-2.5 rounded-lg border text-sm" style={{ borderColor: C.border }} />
+            <div className="flex rounded-lg border overflow-hidden" style={{ borderColor: C.border }}>
+              {["JPY", "TWD"].map((c) => (
+                <button key={c} onClick={() => setForm({ ...form, currency: c })} className="px-3 py-2 text-xs font-bold"
+                  style={{ background: form.currency === c ? C.accent : "white", color: form.currency === c ? "white" : "#888" }}>
+                  {c === "JPY" ? "¥ 日圓" : "$ 台幣"}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="flex gap-3 mb-4">
             <div className="flex-1">
               <label className="text-xs font-bold mb-1 block" style={{ color: C.brownLight }}>開始</label>
