@@ -51,6 +51,21 @@ export function useSupabaseTable(table, tripId, defaultRows = []) {
 /**
  * Hook for the trips table (no trip_id filter, top-level).
  */
+// 前端用 camelCase，DB 用 snake_case，這裡做轉換
+const toDb = (trip) => ({
+  name: trip.name,
+  start_date: trip.startDate,
+  end_date: trip.endDate,
+  transport: trip.transport,
+  return_transport: trip.returnTransport,
+});
+const fromDb = (row) => ({
+  ...row,
+  startDate: row.start_date,
+  endDate: row.end_date,
+  returnTransport: row.return_transport,
+});
+
 export function useTrips() {
   const [trips, setTrips] = useState([]);
   const [loaded, setLoaded] = useState(false);
@@ -62,20 +77,23 @@ export function useTrips() {
         .select("*")
         .order("created_at", { ascending: true });
       if (!error) {
-        setTrips(data || []);
+        setTrips((data || []).map(fromDb));
         setLoaded(true);
       }
     })();
   }, []);
 
   const addTrip = useCallback(async (trip) => {
-    const { data, error } = await supabase.from("trips").insert(trip).select().single();
-    if (!error && data) setTrips((prev) => [...prev, data]);
-    return data;
+    const { data, error } = await supabase.from("trips").insert(toDb(trip)).select().single();
+    if (!error && data) setTrips((prev) => [...prev, fromDb(data)]);
+    return data ? fromDb(data) : null;
   }, []);
 
   const updateTrip = useCallback(async (id, changes) => {
-    const { error } = await supabase.from("trips").update(changes).eq("id", id);
+    const dbChanges = toDb({ ...changes, name: changes.name || "" });
+    // 只送有值的欄位
+    const filtered = Object.fromEntries(Object.entries(dbChanges).filter(([, v]) => v !== undefined));
+    const { error } = await supabase.from("trips").update(filtered).eq("id", id);
     if (!error) setTrips((prev) => prev.map((t) => (t.id === id ? { ...t, ...changes } : t)));
   }, []);
 
