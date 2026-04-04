@@ -1,0 +1,24 @@
+# 依賴套件
+node_modules/
+
+# 打包輸出
+dist/
+
+# 環境變數（含機密金鑰，絕對不能上傳）
+.env
+.env.local
+.env.*.local
+
+# 編輯器設定
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系統檔案
+.DS_Store
+Thumbs.db
+
+# log 檔
+*.log
+npm-debug.log*
