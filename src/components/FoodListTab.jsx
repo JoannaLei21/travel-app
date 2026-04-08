@@ -16,12 +16,12 @@ export default function FoodListTab({ tripId, events, eventOps, dates }) {
   const DATES = dates;
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [form, setForm] = useState({ name: "", category: "正餐", price: "", currency: "JPY", address: "", business_hours: "", nearest_station: "", url: "", reservation_url: "" });
+  const [form, setForm] = useState({ name: "", category: "正餐", price: "", currency: "JPY", address: "", business_hours: "", nearest_station: "", url: "", reservation_url: "", reservation_note: "" });
   const [addToCalId, setAddToCalId] = useState(null);
   const [calForm, setCalForm] = useState({ date: DATES[0], start_h: 11, end_h: 13 });
 
-  const openNew = () => { setForm({ name: "", category: "正餐", price: "", currency: "JPY", address: "", business_hours: "", nearest_station: "", url: "", reservation_url: "" }); setEditId(null); setShowForm(true); };
-  const openEdit = (f) => { setForm({ name: f.name, category: f.category, price: String(f.price), currency: f.currency, address: f.address || "", business_hours: f.business_hours || "", nearest_station: f.nearest_station || "", url: f.url || "", reservation_url: f.reservation_url || "" }); setEditId(f.id); setShowForm(true); };
+  const openNew = () => { setForm({ name: "", category: "正餐", price: "", currency: "JPY", address: "", business_hours: "", nearest_station: "", url: "", reservation_url: "", reservation_note: "" }); setEditId(null); setShowForm(true); };
+  const openEdit = (f) => { setForm({ name: f.name, category: f.category, price: String(f.price), currency: f.currency, address: f.address || "", business_hours: f.business_hours || "", nearest_station: f.nearest_station || "", url: f.url || "", reservation_url: f.reservation_url || "", reservation_note: f.reservation_note || "" }); setEditId(f.id); setShowForm(true); };
 
   const save = () => {
     if (!form.name) return;
@@ -105,7 +105,8 @@ export default function FoodListTab({ tripId, events, eventOps, dates }) {
                   </p>
                 )}
                 {f.url && <a href={f.url} target="_blank" rel="noreferrer" className="inline-block text-xs mt-1 underline" style={{ color: "#1565c0" }}>🔗 店家資訊</a>}
-                {f.reservation_url && <a href={f.reservation_url} target="_blank" rel="noreferrer" className="inline-block text-xs mt-1 ml-3 underline" style={{ color: "#c62828" }}>📋 預約網站</a>}
+                {f.reservation_note && <p className="text-xs mt-1" style={{ color: "#c62828" }}>📅 {f.reservation_note}</p>}
+                {f.reservation_url && <a href={f.reservation_url} target="_blank" rel="noreferrer" className="inline-block text-xs mt-1 underline" style={{ color: "#c62828" }}>📋 預約網站</a>}
                 <div className="flex items-center gap-3 mt-3 pt-2 border-t" style={{ borderColor: C.borderLight }}>
                   <label className="flex items-center gap-1.5 text-xs cursor-pointer" style={{ color: f.booked ? C.green : "#888" }}>
                     <input type="checkbox" checked={f.booked || false} onChange={() => toggleBooked(f.id)} className="accent-green-600" /> 已預約
@@ -172,6 +173,7 @@ export default function FoodListTab({ tripId, events, eventOps, dates }) {
           <input placeholder="營業時間（如：11:00~21:00、週二休）" value={form.business_hours} onChange={(e) => setForm({ ...form, business_hours: e.target.value })} className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />
           <input placeholder="最近車站（如：渋谷站步行 5 分鐘）" value={form.nearest_station} onChange={(e) => setForm({ ...form, nearest_station: e.target.value })} className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />
           <input placeholder="店家網站 / Google Maps 連結" value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />
+          <input placeholder="預約備註（如：7月開放預約、需提前30天）" value={form.reservation_note} onChange={(e) => setForm({ ...form, reservation_note: e.target.value })} className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />
           <input placeholder="預約網站連結（如：Tabelog、Hot Pepper）" value={form.reservation_url} onChange={(e) => setForm({ ...form, reservation_url: e.target.value })} className="w-full p-2.5 mb-3 rounded-lg border text-sm" style={{ borderColor: C.border }} />
           <div className="flex gap-2">
             <button onClick={() => setShowForm(false)} className="flex-1 py-2.5 rounded-xl border text-sm" style={{ borderColor: "#ddd", color: "#888" }}>取消</button>
