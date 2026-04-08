@@ -11,18 +11,19 @@ const calcDays = (s, e) => {
 export default function HomePage({ trips, tripOps, onSelectTrip }) {
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [form, setForm] = useState({ name: "", startDate: DEFAULT_START, endDate: DEFAULT_END, transportType: "", transportNumber: "", depTime: "", depPlace: "", arrPlace: "", returnTransportType: "", returnTransportNumber: "", returnDepTime: "", returnDepPlace: "", returnArrPlace: "" });
+  const [form, setForm] = useState({ name: "", startDate: DEFAULT_START, endDate: DEFAULT_END, transportType: "", transportNumber: "", depTime: "", arrTime: "", depPlace: "", arrPlace: "", returnTransportType: "", returnTransportNumber: "", returnDepTime: "", returnArrTime: "", returnDepPlace: "", returnArrPlace: "" });
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
 
-  const resetForm = () => setForm({ name: "", startDate: DEFAULT_START, endDate: DEFAULT_END, transportType: "", transportNumber: "", depTime: "", depPlace: "", arrPlace: "", returnTransportType: "", returnTransportNumber: "", returnDepTime: "", returnDepPlace: "", returnArrPlace: "" });
+  const resetForm = () => setForm({ name: "", startDate: DEFAULT_START, endDate: DEFAULT_END, transportType: "", transportNumber: "", depTime: "", arrTime: "", depPlace: "", arrPlace: "", returnTransportType: "", returnTransportNumber: "", returnDepTime: "", returnArrTime: "", returnDepPlace: "", returnArrPlace: "" });
 
   const openAdd = () => { resetForm(); setEditId(null); setShowForm(true); };
   const openEdit = (t) => {
     setForm({
       name: t.name, startDate: t.startDate, endDate: t.endDate,
       transportType: t.transport?.type || "", transportNumber: t.transport?.number || "",
-      depTime: t.transport?.depTime || "", depPlace: t.transport?.depPlace || "", arrPlace: t.transport?.arrPlace || "",
+      depTime: t.transport?.depTime || "", arrTime: t.transport?.arrTime || "", depPlace: t.transport?.depPlace || "", arrPlace: t.transport?.arrPlace || "",
       returnTransportType: t.returnTransport?.type || "", returnTransportNumber: t.returnTransport?.number || "",
-      returnDepTime: t.returnTransport?.depTime || "", returnDepPlace: t.returnTransport?.depPlace || "", returnArrPlace: t.returnTransport?.arrPlace || "",
+      returnDepTime: t.returnTransport?.depTime || "", returnArrTime: t.returnTransport?.arrTime || "", returnDepPlace: t.returnTransport?.depPlace || "", returnArrPlace: t.returnTransport?.arrPlace || "",
     });
     setEditId(t.id);
     setShowForm(true);
@@ -32,8 +33,8 @@ export default function HomePage({ trips, tripOps, onSelectTrip }) {
     if (!form.name || !form.startDate || !form.endDate) return;
     const tripData = {
       name: form.name, startDate: form.startDate, endDate: form.endDate,
-      transport: form.transportType ? { type: form.transportType, number: form.transportNumber, depTime: form.depTime, depPlace: form.depPlace, arrPlace: form.arrPlace } : null,
-      returnTransport: form.returnTransportType ? { type: form.returnTransportType, number: form.returnTransportNumber, depTime: form.returnDepTime, depPlace: form.returnDepPlace, arrPlace: form.returnArrPlace } : null,
+      transport: form.transportType ? { type: form.transportType, number: form.transportNumber, depTime: form.depTime, arrTime: form.arrTime, depPlace: form.depPlace, arrPlace: form.arrPlace } : null,
+      returnTransport: form.returnTransportType ? { type: form.returnTransportType, number: form.returnTransportNumber, depTime: form.returnDepTime, arrTime: form.returnArrTime, depPlace: form.returnDepPlace, arrPlace: form.returnArrPlace } : null,
     };
     if (editId) {
       tripOps.updateTrip(editId, tripData);
@@ -43,7 +44,13 @@ export default function HomePage({ trips, tripOps, onSelectTrip }) {
     setShowForm(false);
   };
 
-  const removeTrip = (id) => tripOps.removeTrip(id);
+  const removeTrip = (id) => {
+    setDeleteConfirm(id);
+  };
+  const confirmDelete = () => {
+    if (deleteConfirm) tripOps.removeTrip(deleteConfirm);
+    setDeleteConfirm(null);
+  };
 
   return (
     <div className="min-h-screen" style={{ background: C.bg, maxWidth: 480, margin: "0 auto", fontFamily: "'Noto Sans TC', 'Hiragino Sans', sans-serif" }}>
@@ -78,12 +85,32 @@ export default function HomePage({ trips, tripOps, onSelectTrip }) {
                 </div>
                 {t.transport && (
                   <div className="text-xs p-2 rounded-lg mb-1" style={{ background: C.pinkLight, color: C.brown }}>
-                    <span className="font-medium">去程</span>　{t.transport.type}{t.transport.number ? ` ${t.transport.number}` : ""}{t.transport.depTime ? ` · ${t.transport.depTime}` : ""}{t.transport.depPlace && t.transport.arrPlace ? ` · ${t.transport.depPlace} → ${t.transport.arrPlace}` : ""}
+                    <div><span className="font-medium">去程</span>　{t.transport.type}{t.transport.number ? ` ${t.transport.number}` : ""}</div>
+                    {(t.transport.depTime || t.transport.arrTime) && (
+                      <div className="mt-1 opacity-70">
+                        {t.transport.depTime && <span>出發 {t.transport.depTime}</span>}
+                        {t.transport.depTime && t.transport.arrTime && <span> → </span>}
+                        {t.transport.arrTime && <span>抵達 {t.transport.arrTime}</span>}
+                      </div>
+                    )}
+                    {t.transport.depPlace && t.transport.arrPlace && (
+                      <div className="mt-0.5 opacity-70">{t.transport.depPlace} → {t.transport.arrPlace}</div>
+                    )}
                   </div>
                 )}
                 {t.returnTransport && (
                   <div className="text-xs p-2 rounded-lg" style={{ background: C.yellowLight, color: C.brown }}>
-                    <span className="font-medium">回程</span>　{t.returnTransport.type}{t.returnTransport.number ? ` ${t.returnTransport.number}` : ""}{t.returnTransport.depTime ? ` · ${t.returnTransport.depTime}` : ""}{t.returnTransport.depPlace && t.returnTransport.arrPlace ? ` · ${t.returnTransport.depPlace} → ${t.returnTransport.arrPlace}` : ""}
+                    <div><span className="font-medium">回程</span>　{t.returnTransport.type}{t.returnTransport.number ? ` ${t.returnTransport.number}` : ""}</div>
+                    {(t.returnTransport.depTime || t.returnTransport.arrTime) && (
+                      <div className="mt-1 opacity-70">
+                        {t.returnTransport.depTime && <span>出發 {t.returnTransport.depTime}</span>}
+                        {t.returnTransport.depTime && t.returnTransport.arrTime && <span> → </span>}
+                        {t.returnTransport.arrTime && <span>抵達 {t.returnTransport.arrTime}</span>}
+                      </div>
+                    )}
+                    {t.returnTransport.depPlace && t.returnTransport.arrPlace && (
+                      <div className="mt-0.5 opacity-70">{t.returnTransport.depPlace} → {t.returnTransport.arrPlace}</div>
+                    )}
                   </div>
                 )}
               </div>
@@ -138,8 +165,12 @@ export default function HomePage({ trips, tripOps, onSelectTrip }) {
               <div className="space-y-2 mb-3 p-2.5 rounded-lg" style={{ background: C.pinkLight }}>
                 <input placeholder="班次編號（如：CI-100）" value={form.transportNumber} onChange={(e) => setForm({ ...form, transportNumber: e.target.value })}
                   className="w-full p-2 rounded-lg border text-sm" style={{ borderColor: C.border, background: "white" }} />
-                <input placeholder="出發時間（如：08:30）" value={form.depTime} onChange={(e) => setForm({ ...form, depTime: e.target.value })}
-                  className="w-full p-2 rounded-lg border text-sm" style={{ borderColor: C.border, background: "white" }} />
+                <div className="flex gap-2">
+                  <input placeholder="出發時間（如：08:30）" value={form.depTime} onChange={(e) => setForm({ ...form, depTime: e.target.value })}
+                    className="flex-1 p-2 rounded-lg border text-sm" style={{ borderColor: C.border, background: "white" }} />
+                  <input placeholder="抵達時間（如：12:30）" value={form.arrTime} onChange={(e) => setForm({ ...form, arrTime: e.target.value })}
+                    className="flex-1 p-2 rounded-lg border text-sm" style={{ borderColor: C.border, background: "white" }} />
+                </div>
                 <div className="flex gap-2">
                   <input placeholder="出發地" value={form.depPlace} onChange={(e) => setForm({ ...form, depPlace: e.target.value })}
                     className="flex-1 p-2 rounded-lg border text-sm" style={{ borderColor: C.border, background: "white" }} />
@@ -165,8 +196,12 @@ export default function HomePage({ trips, tripOps, onSelectTrip }) {
               <div className="space-y-2 mb-3 p-2.5 rounded-lg" style={{ background: C.yellowLight }}>
                 <input placeholder="班次編號（如：CI-101）" value={form.returnTransportNumber} onChange={(e) => setForm({ ...form, returnTransportNumber: e.target.value })}
                   className="w-full p-2 rounded-lg border text-sm" style={{ borderColor: C.border, background: "white" }} />
-                <input placeholder="出發時間（如：18:00）" value={form.returnDepTime} onChange={(e) => setForm({ ...form, returnDepTime: e.target.value })}
-                  className="w-full p-2 rounded-lg border text-sm" style={{ borderColor: C.border, background: "white" }} />
+                <div className="flex gap-2">
+                  <input placeholder="出發時間（如：18:00）" value={form.returnDepTime} onChange={(e) => setForm({ ...form, returnDepTime: e.target.value })}
+                    className="flex-1 p-2 rounded-lg border text-sm" style={{ borderColor: C.border, background: "white" }} />
+                  <input placeholder="抵達時間（如：22:00）" value={form.returnArrTime} onChange={(e) => setForm({ ...form, returnArrTime: e.target.value })}
+                    className="flex-1 p-2 rounded-lg border text-sm" style={{ borderColor: C.border, background: "white" }} />
+                </div>
                 <div className="flex gap-2">
                   <input placeholder="出發地" value={form.returnDepPlace} onChange={(e) => setForm({ ...form, returnDepPlace: e.target.value })}
                     className="flex-1 p-2 rounded-lg border text-sm" style={{ borderColor: C.border, background: "white" }} />
@@ -194,6 +229,20 @@ export default function HomePage({ trips, tripOps, onSelectTrip }) {
           style={{ bottom: 24, left: "50%", transform: "translateX(-50%)", width: 52, height: 52, borderRadius: "50%", background: "#e8909c", boxShadow: "0 2px 12px rgba(232,144,156,0.4)" }}>
           ＋
         </button>
+      )}
+
+      {/* 刪除確認 toast */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center px-4 pb-8" style={{ background: "rgba(0,0,0,0.3)" }} onClick={() => setDeleteConfirm(null)}>
+          <div className="w-full max-w-sm bg-white rounded-2xl p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <p className="text-sm font-bold text-center mb-1" style={{ color: C.brown }}>確定要刪除這個旅行嗎？</p>
+            <p className="text-xs text-center mb-4 opacity-50">相關的行程、許願清單、記帳資料都會一起刪除</p>
+            <div className="flex gap-3">
+              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-2.5 rounded-xl border text-sm" style={{ borderColor: "#ddd", color: "#888" }}>取消</button>
+              <button onClick={confirmDelete} className="flex-1 py-2.5 rounded-xl text-white text-sm font-bold" style={{ background: "#d96b6b" }}>確定刪除</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
