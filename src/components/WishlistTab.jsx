@@ -1,14 +1,18 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { C } from "../theme";
 import { JPY_TO_TWD, uid } from "../utils";
 import { ICON_PEN, ICON_TEMPLE, ICON_SUCCESS } from "../constants";
 import { useSupabaseTable } from "../hooks/useSupabase";
-import { useLocalStore } from "../hooks/useLocalStore";
 import Modal from "./Modal";
 
 export default function WishlistTab({ tripId }) {
   const [items, itemOps] = useSupabaseTable("shopwish", tripId);
-  const [storeList, setStoreList] = useLocalStore(`store_list_${tripId}`, []);
+  const [extraStores, setExtraStores] = useState([]);
+  // 從現有商品自動提取商店 + 手動新增的合併
+  const storeList = useMemo(() => {
+    const fromItems = [...new Set(items.map(i => i.store).filter(Boolean))];
+    return [...new Set([...fromItems, ...extraStores])];
+  }, [items, extraStores]);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
   const [form, setForm] = useState({ name: "", store: "", price: "", currency: "JPY" });
@@ -32,7 +36,7 @@ export default function WishlistTab({ tripId }) {
 
   const addStore = () => {
     if (!newStoreName || storeList.includes(newStoreName)) return;
-    setStoreList((p) => [...p, newStoreName]);
+    setExtraStores((p) => [...p, newStoreName]);
     setForm({ ...form, store: newStoreName });
     setNewStoreName("");
     setShowNewStore(false);
