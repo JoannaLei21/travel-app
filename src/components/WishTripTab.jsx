@@ -8,12 +8,12 @@ export default function WishTripTab({ wishes, wishOps, events, eventOps, dates }
   const DATES = dates;
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [form, setForm] = useState({ title: "", address: "", price: "", currency: "JPY", recommend_time: "", ticket_date: "", url: "" });
+  const [form, setForm] = useState({ title: "", address: "", price: "", currency: "JPY", recommend_time: "", business_hours: "", ticket_date: "", url: "" });
   const [addToCalId, setAddToCalId] = useState(null);
   const [calForm, setCalForm] = useState({ date: DATES[0], start_h: 9, end_h: 11 });
 
-  const openNew = () => { setForm({ title: "", address: "", price: "", currency: "JPY", recommend_time: "", ticket_date: "", url: "" }); setEditId(null); setShowForm(true); };
-  const openEdit = (w) => { setForm({ title: w.title, address: w.address, price: String(w.price), currency: w.currency, recommend_time: w.recommend_time, ticket_date: w.ticket_date || "", url: w.url }); setEditId(w.id); setShowForm(true); };
+  const openNew = () => { setForm({ title: "", address: "", price: "", currency: "JPY", recommend_time: "", business_hours: "", ticket_date: "", url: "" }); setEditId(null); setShowForm(true); };
+  const openEdit = (w) => { setForm({ title: w.title, address: w.address, price: String(w.price), currency: w.currency, recommend_time: w.recommend_time, business_hours: w.business_hours || "", ticket_date: w.ticket_date || "", url: w.url }); setEditId(w.id); setShowForm(true); };
 
   const save = () => {
     if (!form.title) return;
@@ -62,7 +62,8 @@ export default function WishTripTab({ wishes, wishOps, events, eventOps, dates }
                 <span className="text-xs opacity-40">≈ NT${Math.round(w.price * JPY_TO_TWD).toLocaleString()}</span>
               )}
             </div>
-            <p className="text-xs mt-1.5" style={{ color: C.accent2 }}><img src={ICON_STOPWATCH} alt="" style={{ width: 14, height: 14, display: "inline", verticalAlign: "middle", marginRight: 3 }} />推薦：{w.recommend_time}</p>
+            {w.business_hours && <p className="text-xs mt-1.5" style={{ color: C.accent2 }}><img src={ICON_STOPWATCH} alt="" style={{ width: 14, height: 14, display: "inline", verticalAlign: "middle", marginRight: 3 }} />營業：{w.business_hours}</p>}
+            {w.recommend_time && <p className="text-xs mt-1" style={{ color: C.accent2 }}>⭐ 推薦：{w.recommend_time}</p>}
             {w.ticket_date && <p className="text-xs mt-1" style={{ color: "#1565c0" }}><img src={ICON_TICKET} alt="" style={{ width: 14, height: 14, display: "inline", verticalAlign: "middle", marginRight: 3 }} />售票：{w.ticket_date}</p>}
             {w.url && <a href={w.url} target="_blank" rel="noreferrer" className="inline-block text-xs mt-1 underline" style={{ color: "#1565c0" }}><img src={ICON_TVSCREEN} alt="" style={{ width: 14, height: 14, display: "inline", verticalAlign: "middle", marginRight: 3 }} />購票網站</a>}
             <div className="flex items-center gap-3 mt-3 pt-2 border-t" style={{ borderColor: C.borderLight }}>
@@ -104,6 +105,7 @@ export default function WishTripTab({ wishes, wishOps, events, eventOps, dates }
               ))}
             </div>
           </div>
+          <input placeholder="營業時間（如：10:00~18:00、週一休）" value={form.business_hours} onChange={(e) => setForm({ ...form, business_hours: e.target.value })} className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />
           <input placeholder="推薦到訪時間（如：平日 09:00）" value={form.recommend_time} onChange={(e) => setForm({ ...form, recommend_time: e.target.value })} className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />
           <input placeholder="售票開始日期（如：2026/6月開放）" value={form.ticket_date} onChange={(e) => setForm({ ...form, ticket_date: e.target.value })} className="w-full p-2.5 mb-2 rounded-lg border text-sm" style={{ borderColor: C.border }} />
           <input placeholder="購票網站連結" value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} className="w-full p-2.5 mb-3 rounded-lg border text-sm" style={{ borderColor: C.border }} />
